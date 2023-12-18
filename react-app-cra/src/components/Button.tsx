@@ -8,7 +8,7 @@ export const Button = ({ onClick }: ButtonProps) => {
   const [count, setCount] = React.useState(0);
 
   return (
-    <button style={{ color: 'red' }} onClick={() => {
+    <button className="bg-orange p-3.5 rounded-md text-white" onClick={() => {
       setCount(count + 1);
       if (onClick) {
         onClick();

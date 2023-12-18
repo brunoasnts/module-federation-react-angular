@@ -7,26 +7,26 @@ import { createRoot } from "react-dom/client";
   standalone: true,
   selector: "app-home",
   template: `
-    <div style="margin: 4rem;">
+    <div style="display: flex; flex-direction: column; gap: 5rem; margin: 4rem;">
       <h2 style="font-size: 2rem; text-align: center; margin-bottom: 5rem;">Home (Consuming from React remote)</h2>
-      <div #containerElementName></div>
+      <div #systemsContainer></div>
+      <div style="display: flex; justify-content: center" #buttonContainer></div>
     </div>
   `,
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('containerElementName', { static: true }) containerRef!: ElementRef;
-  root!: any;
+  @ViewChild('systemsContainer', { static: true }) systemsContainerRef!: ElementRef;
+  @ViewChild('buttonContainer', { static: true }) buttonContainerRef!: ElementRef;
+  rootSystems!: any;
+  rootButton!: any;
 
   async ngAfterViewInit() {
     this.renderSystems();
-    // const { Button } = await import("reactAppCra/Button");
-    // const buttons = [React.createElement(Button), React.createElement(Button)];
-    // const parent = React.createElement('div', {}, ...buttons);
-    // this.root.render(parent);
+    this.renderButton();
   }
 
   async renderSystems() {
-    this.root = createRoot(this.containerRef.nativeElement);
+    this.rootSystems = createRoot(this.systemsContainerRef.nativeElement);
     const { Systems } = await import("reactAppCra/Systems");
     const systems = [
       React.createElement(Systems, { systemType: 'OK' }),
@@ -37,10 +37,17 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     ];
     const parent = React.createElement('div', { style: { display: 'flex', gap: '2rem', justifyContent: 'center' } }, ...systems);
     // this.root.render(React.createElement(Systems, { systemType: 'OK' }));
-    this.root.render(parent);
+    this.rootSystems.render(parent);
+  }
+
+  async renderButton() {
+    this.rootButton = createRoot(this.buttonContainerRef.nativeElement);
+    const { Button } = await import("reactAppCra/Button");
+    this.rootButton.render(React.createElement(Button, { systemType: 'OK' }));
   }
 
   ngOnDestroy() {
-    this.root.unmountComponentAtNode(this.containerRef.nativeElement);
+    this.rootSystems.unmountComponentAtNode(this.systemsContainerRef.nativeElement);
+    this.rootButton.unmountComponentAtNode(this.buttonContainerRef.nativeElement);
   }
 }
